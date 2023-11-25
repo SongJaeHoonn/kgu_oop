@@ -3,9 +3,11 @@ package kyonggi_oop.view.inputView;
 import kyonggi_oop.dto.request.UserRequest;
 import kyonggi_oop.validator.InputValidator;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.Scanner;
 
-public class ConsoleInputView implements InputView {
+public class ConsoleInputView extends JPanel implements InputView {
 
     private static final Scanner scanner = new Scanner(System.in);
 
@@ -53,14 +55,29 @@ public class ConsoleInputView implements InputView {
 
     @Override
     public UserRequest readStudentIdAndPassword() {
-        System.out.println();
-        System.out.println("학번과 비밀번호를 입력해주세요. (e.g. 202300001,abc001)");
-        String input = scanner.next();
-        String[] split = input.split(",");
-        InputValidator.validateStudentIdInput(split[0]);
-        InputValidator.validatePasswordInput(split[1]);
+        JTextField studentIdField = new JTextField();
+        JTextField studentPwField = new JPasswordField();
 
-        return UserRequest.of(split[0], split[1]);
+        Object[] option = {"로그인", "종료"};
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("학번"));
+        panel.add(studentIdField);
+        panel.add(new JLabel("비밀번호"));
+        panel.add(studentPwField);
+
+        int result = JOptionPane.showOptionDialog(
+                null, panel, "Login", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, option, null);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String studentId = studentIdField.getText();
+            String studentPw = studentPwField.getText();
+
+            return UserRequest.of(studentId, studentPw);
+        }else{
+            System.exit(0);
+        }
+        return null;
     }
 
     @Override
